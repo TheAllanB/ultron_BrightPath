@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <h2>Generate Quiz</h2>
+    <form action="{{ url_for('quiz') }}" method="POST" class="quiz-form" id="quiz-form">
+        <div class="form-group">
+            <label for="prompt">Quiz Prompt:</label>
+            <input type="text" id="prompt" name="prompt" required>
+        </div>
+
+        <div class="form-group">
+            <label for="detailed_prompt">Detailed Prompt:</label>
+            <textarea id="detailed_prompt" name="detailed_prompt" rows="4" placeholder="Provide additional details for the quiz..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="timer">Timer (seconds):</label>
+            <input type="number" id="timer" name="timer" required>
+        </div>
+
+        <div class="form-group">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty" name="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="num_questions">Number of Questions:</label>
+            <input type="number" id="num_questions" name="num_questions" min="1" max="20" value="5" required>
+        </div>
+
+        <button type="submit" class="submit-button">Generate Quiz</button>
+    </form>
+
+    {% if quiz_generated %}
+        <script>
+            document.getElementById('quiz-form').style.display = 'none';
+        </script>
+
+        <div class="quiz-question-container">
+            <h3 id="timer">Time left: <span id="time">{{ timer }}</span> seconds</h3>
+            <h2>Question {{ current_question + 1 }}</h2>
+            <p>{{ question['question'] }}</p>
+            <form action="{{ url_for('next_question') }}" method="POST">
+                {% for option in question['options'] %}
+                    <div class="option">
+                        <input type="radio" id="{{ option }}" name="user_answer" value="{{ option }}" required>
+                        <label for="{{ option }}">{{ option }}</label>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="next-button">Next Question</button>
+            </form>
+        </div>
+
+        <script>
+            let timeLeft = parseInt("{{ timer }}");
+            const timerElement = document.getElementById('time');
+            const countdownForm = document.querySelector(".quiz-question-container form");
+        
+            const countdown = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    alert("Time's up!");
+                    if (countdownForm) {
+                        countdownForm.submit();
+                    }
+                } else {
+                    timerElement.textContent = timeLeft;
+                    timeLeft--;
+                }
+            }, 1000);
+        </script>
+        
+    {% endif %}
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+    .quiz-container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .quiz-form {
+        display: flex;
+        flex-direction: column;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+    }
+    .submit-button,
+    .next-button {
+        background-color: #28a745;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .submit-button:hover,
+    .next-button:hover {
+        background-color: #218838;
+    }
+    .quiz-question-container {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 8px;
+    }
+    .option {
+        margin: 10px 0;
+    }
+    #timer {
+        font-weight: bold;
+        color: #dc3545;
+    }
+</style>
+{% endblock %}

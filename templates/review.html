@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="review-container">
+    <h1>Review Page</h1>
+    <form action="{{ url_for('review') }}" method="POST" class="review-form">
+        <input type="text" name="topic_prompt" placeholder="Enter a topic to review..." required>
+        <button type="submit">Get Review</button>
+    </form>
+
+    {% if review_generated %}
+    <div class="review-content">
+        <h2>Relevant Information</h2>
+        <p class="rev_out">{{ review_info|nl2br }}</p>
+
+        <h2>YouTube Links</h2>
+        <ul class="youtube-links">
+            {% for link in youtube_links %}
+            <li class="youtube-link-item">
+                <a href="{{ link.url }}" target="_blank">{{ link.title() }}</a>
+                <p>{{ link.description }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% elif error %}
+    <div class="error-message">
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

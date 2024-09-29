@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+    <h2>Quiz Results</h2>
+    <p>Your Score: {{ score }} out of {{ total }}</p>
+    <table>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+        </tr>
+        {% for index in range(0, total) %}
+            <tr>
+                <td>{{ quiz[index].question }}</td>
+                <td>{{ answers[index] }}</td>
+                <td>{{ quiz[index].correct_answer }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <a href="{{ url_for('quiz') }}" class="btn btn-primary">Take Another Quiz</a>
+{% endblock %}

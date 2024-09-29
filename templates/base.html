@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Multipage Flask App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo-container">
+            <img src="https://e7.pngegg.com/pngimages/103/321/png-clipart-logo-incandescent-light-bulb-design-text-innovation-thumbnail.png" alt="Bright Path Logo" class="logo">
+            <h1 class="app-name">Bright Path</h1>
+        </div>
+        <nav class="main-nav">
+            <button class="login-btn">Sign Up / Login</button>
+            <div class="dropdown">
+                <button class="dropdown-btn">☰</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('home') }}">Home</a>
+                    <a href="{{ url_for('quiz') }}">Quiz</a>
+                    <a href="{{ url_for('review') }}">Review</a>
+                    <a href="{{ url_for('news_page') }}">News</a>
+                    <a href="{{ url_for('chat') }}">Chat</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="content-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <nav class="bottom-navbar">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('quiz') }}">Quiz</a>
+            <a href="{{ url_for('review') }}">Review</a>
+            <a href="{{ url_for('news_page') }}">News</a>
+            <a href="{{ url_for('chat') }}">Chat</a>
+        </nav>
+        <p class="footer-copyright">&copy; 2024 Multipage Flask App. All rights reserved.</p>
+    </footer>
+</body>
+</html>

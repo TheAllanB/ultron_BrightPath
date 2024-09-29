@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="news-container">
+    <h1 class="news_head">News Page</h1>
+    <form action="{{ url_for('news_page') }}" method="POST" class="news-form">
+        <input type="text" name="news_prompt" placeholder="Search for student-related news..." required>
+        <button type="submit">Update Feed</button>
+    </form>
+
+    <div class="news-grid" id="news-grid">
+        {% for article in news_articles %}
+        <div class="news-card">
+            <h3 class="news-title">{{ article.title }}</h3>
+            <p class="news-description">{{ article.description }}</p>
+            <a href="{{ article.url }}" class="news-link" target="_blank">Read More</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button id="load-more" class="load-more-button">Load More</button>
+</div>
+
+<script>
+    
+    let offset =  news_articles|length | tojson ;
+    const loadMoreButton = document.getElementById("load-more");
+
+    loadMoreButton.addEventListener("click", function() {
+        fetch(`/news/load_more?offset=${offset}`)
+            .then(response => response.json())
+            .then(data => {
+                const newsGrid = document.querySelector(".news-grid");
+                data.news_articles.forEach(article => {
+                    const newsCard = document.createElement("div");
+                    newsCard.className = "news-card";
+                    newsCard.innerHTML = `
+                        <h3 class="news-title">${article.title}</h3>
+                        <p class="news-description">${article.description}</p>
+                        <a href="${article.url}" class="news-link" target="_blank">Read More</a>
+                    `;
+                    newsGrid.appendChild(newsCard);
+                });
+                offset += data.news_articles.length;
+                if (data.news_articles.length === 0) {
+                    loadMoreButton.style.display = "none";
+                }
+            })
+            .catch(error => console.error("Error loading more articles:", error));
+    });
+</script>
+
+
+<style>
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .news-card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .load-more-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .load-more-button:hover {
+        background: #0056b3;
+    }
+</style>
+{% endblock %}
